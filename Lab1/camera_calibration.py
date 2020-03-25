@@ -89,39 +89,28 @@ for iter_H in range(len(H)):
         , np.array([Hi[0, 1] * Hi[0, 1],Hi[0, 1] * Hi[1, 1] + Hi[1, 1] * Hi[0, 1],Hi[1, 1] * Hi[1, 1],Hi[2, 1] * Hi[0, 1] + Hi[0, 1] * Hi[2, 1],Hi[2, 1] * Hi[1, 1] + Hi[1, 1] * Hi[2, 1],Hi[2, 1] * Hi[2, 1]])
         )
 
-print("V is : ", V)
+
 U, Sigma, Vt = np.linalg.svd(V)
-print("U : ", U)
-print("Sigma", Sigma)
-print("It is Vt :  ", Vt)
-# pre_B=Vt(,6)
-pre_B = Vt # [np.argmin(Sigma)]
+pre_B = Vt[np.argmin(Sigma)]
 sym_B = np.zeros(9)
 ## sym_B is symmetic
-sym_B[0]            = pre_B[0][0]
-sym_B[1] = sym_B[3] = pre_B[0][1]
-sym_B[2] = sym_B[6] = pre_B[0][2]
-sym_B[4]            = pre_B[0][3]
-sym_B[5] = sym_B[7] = pre_B[0][4]
-sym_B[8]            = pre_B[0][5]
+sym_B[0] = pre_B[0]
+sym_B[1] = sym_B[3] = pre_B[1]
+sym_B[2] = sym_B[6] = pre_B[2]
+sym_B[4] = pre_B[3]
+sym_B[5] = sym_B[7] = pre_B[4]
+sym_B[8] = pre_B[5]
 sym_B = sym_B.reshape(3, 3)
 
-print("There is sym_B", sym_B)
+# check eigenvalues are positive define or not
+#if not np.all(np.linalg.eigvals(sym_B) > 0):
+#sym_B *= -1
 
-
-## check eigenvalues are positive define or not
-# print(sym_B)
-# print(np.linalg.eigvals(sym_B))
-if not np.all(np.linalg.eigvals(sym_B) > 0):
-    sym_B *= -1
-
-# print(np.linalg.eigvals(sym_B))
-# print(sym_B)
 ## step 3 : sym_B = K-1tK-1
 K_inverse = np.linalg.cholesky(sym_B)
 K = np.linalg.inv(K_inverse.T)
 ## print origin K
-# print(K)
+print(K)
 
 
 ## get extrinsics [r1 r2 t]
