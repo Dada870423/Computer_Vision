@@ -77,21 +77,26 @@ img_count = len(objpoints)
 for iter_img in range(img_count):
     retval, mask = cv2.findHomography(cv2.UMat(objpoints[iter_img]), cv2.UMat(imgpoints[iter_img]))
     H.append(retval)
-
+print("H: ", np.size(H))
 ## step 2 : get B, V is the matrix in SVD
 ## U, Sigma, Vt are for U, sigma, Vt
 V = np.zeros((2 * len(H), 6))
 
 for iter_H in range(len(H)):
     Hi = H[iter_H]
-    V[2 * iter_H] = np.array([Hi[0, 0] * Hi[0, 1],Hi[0, 0] * Hi[1, 1] + Hi[1, 0] * Hi[0, 1],Hi[1, 0] * Hi[1, 1],Hi[2, 0] * Hi[0, 1] + Hi[0, 0] * Hi[2, 1],Hi[2, 0] * Hi[1, 1] + Hi[1, 0] * Hi[2, 1],Hi[2, 0] * Hi[2, 1]])
-    V[2 * iter_H + 1] = np.subtract(np.array([Hi[0, 0] * Hi[0, 0],Hi[0, 0] * Hi[1, 0] + Hi[1, 0] * Hi[0, 0],Hi[1, 0] * Hi[1, 0],Hi[2, 0] * Hi[0, 0] + Hi[0, 0] * Hi[2, 0],Hi[2, 0] * Hi[1, 0] + Hi[1, 0] * Hi[2, 0],Hi[2, 0] * Hi[2, 0]])
-        , np.array([Hi[0, 1] * Hi[0, 1],Hi[0, 1] * Hi[1, 1] + Hi[1, 1] * Hi[0, 1],Hi[1, 1] * Hi[1, 1],Hi[2, 1] * Hi[0, 1] + Hi[0, 1] * Hi[2, 1],Hi[2, 1] * Hi[1, 1] + Hi[1, 1] * Hi[2, 1],Hi[2, 1] * Hi[2, 1]])
-        )
+    V[2 * iter_H] = np.array([Hi[0, 0] * Hi[1, 0],Hi[0, 0] * Hi[1, 1] + Hi[0, 1] * Hi[1, 0],Hi[0, 1] * Hi[1, 1],Hi[0, 2] * Hi[1, 0] + Hi[0, 0] * Hi[1, 2],Hi[0, 2] * Hi[1, 1] + Hi[0, 1] * Hi[1, 2],Hi[0, 2] * Hi[1, 2]]).transpose()
+    V[2 * iter_H + 1] = np.subtract(np.array([Hi[0, 0] * Hi[0, 0],Hi[0, 0] * Hi[0, 1] + Hi[0, 1] * Hi[0, 0],Hi[0, 1] * Hi[0, 1],Hi[0, 2] * Hi[0, 0] + Hi[0, 0] * Hi[0, 2],Hi[0, 2] * Hi[0, 1] + Hi[0, 1] * Hi[0, 2],Hi[0, 2] * Hi[0, 2]])
+        , np.array([Hi[1, 0] * Hi[1, 0],Hi[1, 0] * Hi[1, 1] + Hi[1, 1] * Hi[1, 0],Hi[1, 1] * Hi[1, 1],Hi[1, 2] * Hi[1, 0] + Hi[1, 0] * Hi[1, 2],Hi[1, 2] * Hi[1, 1] + Hi[1, 1] * Hi[1, 2],Hi[1, 2] * Hi[1, 2]])
+        ).transpose()
 
 
 U, Sigma, Vt = np.linalg.svd(V)
+
+print("Vt: ", Vt)
+
 pre_B = Vt[np.argmin(Sigma)]
+
+print("pre_B: ", pre_B)
 sym_B = np.zeros(9)
 ## sym_B is symmetic
 sym_B[0] = pre_B[0]
@@ -101,10 +106,10 @@ sym_B[4] = pre_B[3]
 sym_B[5] = sym_B[7] = pre_B[4]
 sym_B[8] = pre_B[5]
 sym_B = sym_B.reshape(3, 3)
-
+print(sym_B)
 # check eigenvalues are positive define or not
-#if not np.all(np.linalg.eigvals(sym_B) > 0):
-#sym_B *= -1
+if not np.all(np.linalg.eigvals(sym_B) > 0):
+    sym_B *= -1
 
 ## step 3 : sym_B = K-1tK-1
 K_inverse = np.linalg.cholesky(sym_B)
