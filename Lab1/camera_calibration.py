@@ -4,6 +4,26 @@ import glob
 import matplotlib.pyplot as plt
 import camera_calibration_show_extrinsics as show
 from PIL import Image
+
+############################# Magic.......
+def Magic(k, l, h):
+    MagicV = np.array([h[0, k]*h[0, l],
+                     h[0, k]*h[1, l] + h[1, k]*h[0, l],
+                     h[1, k]*h[1, l],
+                     h[2, k]*h[0, l] + h[0, k]*h[2, l],
+                     h[2, k]*h[1, l] + h[1, k]*h[2, l],
+                     h[2, k]*h[2, l]], 
+                     dtype='float32')
+    return MagicV
+
+
+
+
+#############################
+
+
+
+
 # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
 # (8,6) is for the given testing images.
 # If you use the another data (e.g. pictures you take by your smartphone), 
@@ -55,83 +75,119 @@ img_size = (img.shape[1], img.shape[0])
 # You need to comment these functions and write your calibration function from scratch.
 # Notice that rvecs is rotation vector, not the rotation matrix, and tvecs is translation vector.
 # In practice, you'll derive extrinsics matrixes directly. The shape must be [pts_num,3,4], and use them to plot.
-### ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size,None,None)
-### Vr = np.array(rvecs)
-### Tr = np.array(tvecs)
-### extrinsics = np.concatenate((Vr, Tr), axis=1).reshape(-1,6)
+"""
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, img_size,None,None)
+Vr = np.array(rvecs)
+Tr = np.array(tvecs)
+extrinsics = np.concatenate((Vr, Tr), axis=1).reshape(-1,6)
+"""
 
 
 """
 Write your code here
-
-## the goal is get the extrinsics and the mtx
 ## 1. get H
-## 2. find B from H
-## 3. B = K-1tK-1
+## 2. get B 
+## 3. B=KtK
+## 4. ex = H K 
+
+
 """
-## H is Hi, the number of img is img_count
-H = []
-img_count = len(objpoints)
 
-## step 1 : cal all the Homo matrix of each img, and retval is h
-for iter_img in range(img_count):
-    retval, mask = cv2.findHomography(cv2.UMat(objpoints[iter_img]), cv2.UMat(imgpoints[iter_img]))
-    H.append(retval)
-print("H: ", np.size(H))
-## step 2 : get B, V is the matrix in SVD
-## U, Sigma, Vt are for U, sigma, Vt
-V = np.zeros((2 * len(H), 6))
+## get H
+###
+H = np.zeros((len(images), 9))
 
-for iter_H in range(len(H)):
-    Hi = H[iter_H]
-    V[2 * iter_H] = np.array([Hi[0, 0] * Hi[1, 0],Hi[0, 0] * Hi[1, 1] + Hi[0, 1] * Hi[1, 0],Hi[0, 1] * Hi[1, 1],Hi[0, 2] * Hi[1, 0] + Hi[0, 0] * Hi[1, 2],Hi[0, 2] * Hi[1, 1] + Hi[0, 1] * Hi[1, 2],Hi[0, 2] * Hi[1, 2]]).transpose()
-    V[2 * iter_H + 1] = np.subtract(np.array([Hi[0, 0] * Hi[0, 0],Hi[0, 0] * Hi[0, 1] + Hi[0, 1] * Hi[0, 0],Hi[0, 1] * Hi[0, 1],Hi[0, 2] * Hi[0, 0] + Hi[0, 0] * Hi[0, 2],Hi[0, 2] * Hi[0, 1] + Hi[0, 1] * Hi[0, 2],Hi[0, 2] * Hi[0, 2]])
-        , np.array([Hi[1, 0] * Hi[1, 0],Hi[1, 0] * Hi[1, 1] + Hi[1, 1] * Hi[1, 0],Hi[1, 1] * Hi[1, 1],Hi[1, 2] * Hi[1, 0] + Hi[1, 0] * Hi[1, 2],Hi[1, 2] * Hi[1, 1] + Hi[1, 1] * Hi[1, 2],Hi[1, 2] * Hi[1, 2]])
-        ).transpose()
+for iter_H in range(len(objpoints)):
+    Obj_Point = objpoints[iter_H]
+    Img_point = imgpoints[iter_H]
+    M = np.zeros((2 * len(Obj_Point), 9), dtype = np.float64)
+    
+    Img_point = Img_point.reshape(49, 2)
+    Img_point = np.concatenate((Img_point, np.ones(shape = (49, 1))), axis = 1)
+    
+    for iter_M in xrange(len(Obj_Point)):
+        x = Obj_Point[iter_M, 0]
+        y = Obj_Point[iter_M, 1]
+        u = Img_point[iter_M, 0]
+        v = Img_point[iter_M, 1]
+        
+        M[iter_M * 2] = np.array([-x, -y, -1, 0, 0, 0, x*u, y*u, u])
+        M[iter_M * 2 + 1] = np.array([0, 0, 0, -x, -y, -1, x*v, y*v, v])
+        
+    U_H, Sigma_H, Vt_H = np.linalg.svd(M)
+    index_Min = np.argmin(Sigma_H)
+    
+    ##Norm it
+    for iter_Vt in range(9):
+        Vt_H[index_Min, iter_Vt] = Vt_H[index_Min, iter_Vt] / Vt_H[index_Min, 8]
+        
+    H[iter_H] = Vt_H[index_Min]
+    
+    
+H = np.reshape(H, (len(images), 3, 3))
+print("H: ", H)
+### H done
 
+## get B
+MagicV = np.zeros([2 * len(H), 6])
+index = 0
+for iter_H in H:
+    MagicV[index] = Magic(0, 1, iter_H)
+    MagicV[index + 1] = Magic(0, 0, iter_H) - Magic(1, 1, iter_H)
+    index = index + 2
 
-U, Sigma, Vt = np.linalg.svd(V)
+U_B, Sigma_B, VT_B = np.linalg.svd(MagicV)
+index_Min_B = np.argmin(Sigma_B)
+b = VT_B[index_Min_B]
+print("b; ", b)
+B = np.array([[b[0],b[1],b[3]],
+              [b[1],b[2],b[4]],
+              [b[3],b[4],b[5]]])
 
-print("Vt: ", Vt)
+Oy = (b[1] * b[3] - b[0] * b[4]) / (b[0] * b[2] - b[1] * b[1])
 
-pre_B = Vt[np.argmin(Sigma)]
+if b[0] == 0:
+    b[0] = 1.0
+Lda_B = b[5] - (b[3] * b[3] + Oy * (b[1] * b[3] - b[0] * b[4])) / b[0]
+B = B / Lda_B
 
-print("pre_B: ", pre_B)
-sym_B = np.zeros(9)
-## sym_B is symmetic
-sym_B[0] = pre_B[0]
-sym_B[1] = sym_B[3] = pre_B[1]
-sym_B[2] = sym_B[6] = pre_B[2]
-sym_B[4] = pre_B[3]
-sym_B[5] = sym_B[7] = pre_B[4]
-sym_B[8] = pre_B[5]
-sym_B = sym_B.reshape(3, 3)
-print(sym_B)
-# check eigenvalues are positive define or not
-if not np.all(np.linalg.eigvals(sym_B) > 0):
-    sym_B *= -1
+## B done 
+## Calculate K 
+K = np.linalg.inv(np.linalg.cholesky(B).transpose())
 
-## step 3 : sym_B = K-1tK-1
-K_inverse = np.linalg.cholesky(sym_B)
-K = np.linalg.inv(K_inverse.T)
-## print origin K
-print(K)
+## K done
 
+## do extrinsics
 
-## get extrinsics [r1 r2 t]
-extrinsics = []
+extrinsics = np.zeros((len(H), 3, 4))
+K_inverse = np.linalg.inv(K)
 
-for iter_img in range(img_count):
-    tmp = np.matmul(K_inverse.T, H[iter_img][:, 0])
-    lda = 1 / (np.sqrt(tmp.dot(tmp)))
-    r1 = lda * tmp
-    r2 = lda * np.matmul(K_inverse.T, H[iter_img][:, 1])
+for index in range(len(images)):
+    h = H[index]  
+    h1 = h[:, 0]
+    h2 = h[:, 1]
+    h3 = h[:, 2]
+    
+    Lda_1 = 1 / np.linalg.norm(np.dot(K_inverse,h1), ord = 2)
+    Lda_2 = 1 / np.linalg.norm(np.dot(K_inverse,h2), ord = 2)
+    Lda_3 = (Lda_1 + Lda_2) / 2
+    
+    r1 = Lda_1 * (np.dot(K_inverse,h1))
+    r2 = Lda_2 * (np.dot(K_inverse,h2))
     r3 = np.cross(r1, r2)
-    t = lda * np.matmul(K_inverse.T, H[iter_img][:, 2])
-    extrinsics.append(np.column_stack((r1, r2, r3, t)))
+    t = Lda_3 * (np.dot(K_inverse,h3))
+    extrinsics[index] = np.array([[r1[0],r2[0],r3[0],t[0]],
+                                  [r1[1],r2[1],r3[1],t[1]],
+                                  [r1[2],r2[2],r3[2],t[2]]])
+
+## extrinsics done
+
+
+## set mtk, extrinsisc
 
 mtx = K
-extrinsics = np.array(extrinsics)
+# extrinsics define before
+
 # show the camera extrinsics
 print('Show the camera extrinsics')
 # plot setting
