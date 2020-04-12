@@ -99,8 +99,8 @@ def My_resize(Img1, Img2, Diff_x, Diff_y):
     return Img1,Img2
 ## Function done
 ## read amd get the useful information
-InputFile1="./11.bmp"
-InputFile2="./10.bmp"
+InputFile1="./1_bicycle.bmp"
+InputFile2="./1_motorcycle.bmp"
 
 FirstThreeColors = cv2.imread(InputFile1,3)
 SecondThreeColors = cv2.imread(InputFile2,3)
