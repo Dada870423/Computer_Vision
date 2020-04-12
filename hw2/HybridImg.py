@@ -14,99 +14,90 @@ from matplotlib import pyplot as plt
 
 ##############
 def UnderBound(InputImg):
-	Dim_x, Dim_y, Dim_z = InputImg.shape
-	for x in range(Dim_x):
-		for y in range(Dim_y):
-			for z in range(3):
-				if InputImg[x][y][z] > 255:
-					InputImg[x][y][z] = 255
-	return InputImg
+    Dim_x, Dim_y, Dim_z = InputImg.shape
+    for x in range(Dim_x):
+        for y in range(Dim_y):
+            for z in range(3):
+                if InputImg[x][y][z] > 255:
+                    InputImg[x][y][z] = 255
+    return InputImg
 
 
 
 
 def InverseFourier(B, G, R):
-	BB = np.fft.ifft2(np.fft.ifftshift(B))
-	GG = np.fft.ifft2(np.fft.ifftshift(G))
-	RR = np.fft.ifft2(np.fft.ifftshift(R))
-	return BB, GG, RR
+    BB = np.fft.ifft2(np.fft.ifftshift(B))
+    GG = np.fft.ifft2(np.fft.ifftshift(G))
+    RR = np.fft.ifft2(np.fft.ifftshift(R))
+    return BB, GG, RR
 
 
 def HFilter(InputImg, D0, H1L0):
-	process_img = InputImg
-	Dim_x, Dim_y = InputImg.shape
-	for x in range(Dim_x):
-		for y in range(Dim_y):
-			if H1L0 == 1:
-				if InputImg[x][y] < D0:
-					InputImg[x][y] = 0
-				else:
-					InputImg[x][y] = InputImg[x][y] * (1 - GaussianValue(InputImg[x][y], D0))
-			else:
-				if InputImg[x][y] > D0:
-					InputImg[x][y] = 0
-				else:
-					InputImg[x][y] = InputImg[x][y] * (GaussianValue(InputImg[x][y], D0))
-	return InputImg
+    process_img = InputImg
+    Dim_x, Dim_y = InputImg.shape
+    for x in range(Dim_x):
+        for y in range(Dim_y):
+            if H1L0 == 1:
+                if InputImg[x][y] < D0:
+                    InputImg[x][y] = 0
+                else:
+                    InputImg[x][y] = InputImg[x][y] * (1 - GaussianValue(InputImg[x][y], D0))
+            else:
+                if InputImg[x][y] > D0:
+                    InputImg[x][y] = 0
+                else:
+                    InputImg[x][y] = InputImg[x][y] * (GaussianValue(InputImg[x][y], D0))
+    return InputImg
 
 def GaussianValue(D, D0):
-	ExpValue = (abs((D * D) / (2 * D0 * D0))) * (-1)
-	return math.exp(ExpValue)
+    ExpValue = (abs((D * D) / (2 * D0 * D0))) * (-1)
+    return math.exp(ExpValue)
 
 
 
 def My_resize(Img1, Img2, Diff_x, Diff_y):
-	FirstDim_x, FirstDim_y = Img1.shape
-	SecondDim_x, SecondDim_y = Img2.shape
+    FirstDim_x, FirstDim_y = Img1.shape
+    SecondDim_x, SecondDim_y = Img2.shape
 
-	if FirstDim_x > SecondDim_x:
-		if (Diff_x % 2) == 0:
-			bound1 = Diff_x / 2
-			bound2 = FirstDim_x - bound1
-			Img1 = Img1[bound1:bound2,:]
-		else:
-			bound1 = int(Diff_x / 2)
-			bound2 = FirstDim_x - bound1 + 1
-			Img1 = Img1[bound1:bound2,:]
-	elif SecondDim_x > FirstDim_x:
-		if (Diff_x % 2) == 0:
-			bound1 = Diff_x / 2
-			bound2 = SecondDim_x - bound1
-			Img2 = Img2[bound1:bound2,:]
-		else:
-			bound1 = int(Diff_x / 2)
-			bound2 = SecondDim_x - bound1 + 1
-			Img2 = Img2[bound1:bound2,:]
+    if FirstDim_x > SecondDim_x:
+        if (Diff_x % 2) == 0:
+            bound1 = Diff_x / 2
+            bound2 = FirstDim_x - bound1
+            Img1 = Img1[bound1:bound2,:]
+        else:
+            bound1 = int(Diff_x / 2)
+            bound2 = FirstDim_x - bound1 + 1
+            Img1 = Img1[bound1:bound2,:]
+    elif SecondDim_x > FirstDim_x:
+        if (Diff_x % 2) == 0:
+            bound1 = Diff_x / 2
+            bound2 = SecondDim_x - bound1
+            Img2 = Img2[bound1:bound2,:]
+        else:
+            bound1 = int(Diff_x / 2)
+            bound2 = SecondDim_x - bound1 + 1
+            Img2 = Img2[bound1:bound2,:]
 
-	if FirstDim_y > SecondDim_y:
-		if (Diff_y % 2) == 0:
-			bound1 = Diff_y / 2
-			bound2 = FirstDim_y - bound1
-			Img1 = Img1[:,bound1:bound2]
-		else:
-			bound1 = int(Diff_y / 2)
-			bound2 = FirstDim_y - bound1 + 1
-			Img1 = Img1[:,bound1:bound2]
-	elif SecondDim_y > FirstDim_y:
-		if (Diff_y % 2) == 0:
-			bound1 = Diff_y / 2
-			bound2 = SecondDim_y - bound1
-			Img2 = Img2[:,bound1:bound2]
-		else:
-			bound1 = int(Diff_y / 2)
-			bound2 = SecondDim_y - bound1 + 1
-			Img2 = Img2[:,bound1:bound2]
-	return Img1,Img2
-
-
-
-
-
-
-
-
-
-
+    if FirstDim_y > SecondDim_y:
+        if (Diff_y % 2) == 0:
+            bound1 = Diff_y / 2
+            bound2 = FirstDim_y - bound1
+            Img1 = Img1[:,bound1:bound2]
+        else:
+            bound1 = int(Diff_y / 2)
+            bound2 = FirstDim_y - bound1 + 1
+            Img1 = Img1[:,bound1:bound2]
+    elif SecondDim_y > FirstDim_y:
+        if (Diff_y % 2) == 0:
+            bound1 = Diff_y / 2
+            bound2 = SecondDim_y - bound1
+            Img2 = Img2[:,bound1:bound2]
+        else:
+            bound1 = int(Diff_y / 2)
+            bound2 = SecondDim_y - bound1 + 1
+            Img2 = Img2[:,bound1:bound2]
+    return Img1,Img2
+## Function done
 ## read amd get the useful information
 InputFile1="./11.bmp"
 InputFile2="./10.bmp"
@@ -211,6 +202,3 @@ plt.title("Low"), plt.xticks([]), plt.yticks([])
 plt.subplot(155), plt.imshow(FinalImg.astype(int))
 plt.title("Hybrid"), plt.xticks([]), plt.yticks([])
 plt.show()
-
-
-
