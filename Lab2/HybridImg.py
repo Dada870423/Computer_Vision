@@ -144,14 +144,14 @@ FourierShift_2_R = np.fft.fftshift(Fourier_2_R)
 
 ## Multiply F(u,v) by a ﬁlter 
 ### High
-H_B = HFilter(FourierShift_1_B, D0 = 6, H1L0 = 1)
-H_G = HFilter(FourierShift_1_G, D0 = 6, H1L0 = 1)
-H_R = HFilter(FourierShift_1_R, D0 = 6, H1L0 = 1)
+H_B = HFilter(FourierShift_1_B, D0 = 70000, H1L0 = 1)
+H_G = HFilter(FourierShift_1_G, D0 = 70000, H1L0 = 1)
+H_R = HFilter(FourierShift_1_R, D0 = 70000, H1L0 = 1)
 
 ### Low
-L_B = HFilter(FourierShift_2_B, D0 = 99996, H1L0 = 0)
-L_G = HFilter(FourierShift_2_G, D0 = 99996, H1L0 = 0)
-L_R = HFilter(FourierShift_2_R, D0 = 99996, H1L0 = 0)
+L_B = HFilter(FourierShift_2_B, D0 = 15000, H1L0 = 0)
+L_G = HFilter(FourierShift_2_G, D0 = 15000, H1L0 = 0)
+L_R = HFilter(FourierShift_2_R, D0 = 15000, H1L0 = 0)
 ### filter done
 
 ## Compute the inverse Fourier transformation 
