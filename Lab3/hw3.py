@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import math
+from RANSAC import RANSAC
 
 class myMatch():
     def __init__(self, id, distance):
@@ -89,10 +90,6 @@ plt.show()
 
 # part3 
 #do RANSAC
-n_times = 100
-s = 4 #pick 4 points to find H
-for it in range(n_times):
-    sample_idx = np.random.choice(matches.size, s, replace=False)
-    # find H
-    H = np.zeros(9)
+RSC = RANSAC(thresh = 10.0, n_times = 100, points = 4)
+RSC.ransac()
     
