@@ -76,7 +76,9 @@ Mymatches = np.asarray(temp)
 vis = np.zeros((max(hA, hB), wA + wB, 3), dtype="uint8")
 vis[0:hA, 0:wA] = img1
 vis[0:hB, wA:] = img2
- 
+
+CorList = []
+
 for (trainIdx, queryIdx) in Mymatches:
     temp = np.random.randint(0, high=255, size=(3,))
     color = (np.asscalar(temp[0]), np.asscalar(temp[1]), np.asscalar(temp[2]))
@@ -84,12 +86,24 @@ for (trainIdx, queryIdx) in Mymatches:
     ptA = (int(kp1[queryIdx].pt[0]), int(kp1[queryIdx].pt[1]))
     ptB = (int(kp2[trainIdx].pt[0] + wA), int(kp2[trainIdx].pt[1]))
     cv2.line(vis, ptA, ptB, color, 1)
+    CorList.append([ptA, ptB])
 plt.imshow(vis)
 plt.show()
 
 
 # part3 
 #do RANSAC
+CorList = np.array(CorList)
 RSC = RANSAC(thresh = 10.0, n_times = 100, points = 4)
-RSC.ransac()
+RSC.ransac(CorList = CorList)
+
+
+
+
+
+
+
+
+
+
     
