@@ -88,7 +88,7 @@ for (trainIdx, queryIdx) in Mymatches:
     cv2.line(vis, ptA, ptB, color, 1)
     (x1, y1) = (kp1[queryIdx].pt)
     (x2, y2) = (kp2[trainIdx].pt)
-    CorList.append([x1, y1, x2, y2])
+    CorList.append([x1, y1, x2 + wA, y2])
 plt.imshow(vis)
 plt.show()
 
