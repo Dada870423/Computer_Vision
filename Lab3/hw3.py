@@ -99,6 +99,30 @@ CorList = np.array(CorList)
 RSC = RANSAC(thresh = 10.0, n_times = 100, points = 4)
 H, Lines = RSC.ransac(CorList = CorList)
 
+Match_picture = 0
+
+
+
+Match_picture = cv2.drawMatches(img1,kp1,img2,kp2,Mymatches[:5], Match_picture,flags=2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
