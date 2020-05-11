@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import math
-from RANSAC import RANSAC
+from RANSAC import *
 
 class myMatch():
     def __init__(self, id, distance):
@@ -86,7 +86,9 @@ for (trainIdx, queryIdx) in Mymatches:
     ptA = (int(kp1[queryIdx].pt[0]), int(kp1[queryIdx].pt[1]))
     ptB = (int(kp2[trainIdx].pt[0] + wA), int(kp2[trainIdx].pt[1]))
     cv2.line(vis, ptA, ptB, color, 1)
-    CorList.append([ptA, ptB])
+    (x1, y1) = (kp1[queryIdx].pt)
+    (x2, y2) = (kp2[trainIdx].pt)
+    CorList.append([x1, y1, x2, y2])
 plt.imshow(vis)
 plt.show()
 
