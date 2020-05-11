@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import math
 from RANSAC import *
+from WARP import *
 
 class myMatch():
     def __init__(self, id, distance):
@@ -65,9 +66,11 @@ for m in matches:
 matches = np.asarray(good)
 '''
 temp = []
+Mm = []
 for m in Mymatches:
     if m[0].distance < 0.8*m[1].distance:
         temp.append((m[0].trainIdx, m[0].queryIdx))
+        Mm.append(m[0])
 Mymatches = np.asarray(temp)
   
 # 畫圖
@@ -102,26 +105,45 @@ H, Lines = RSC.ransac(CorList = CorList)
 Match_picture = 0
 
 
-
-Match_picture = cv2.drawMatches(img1,kp1,img2,kp2,Mymatches[:5], Match_picture,flags=2)
-
-
+print("MY", Mm[0])
+Match_picture = cv2.drawMatches(img1,kp1,img2,kp2, Mm, Match_picture, flags=2)
 
 
-
-
+WAP = WARP()
+ResultImg = WAP.warp(img = img1, H = H, outputShape = (img1.shape[1] + img2.shape[1], img1.shape[0]))
 
 
 
+print("Linear(alpha) Blending...")
+leftest_overlap = img2.shape[1]
+for i in range(0,img2.shape[0]):
+    for j in range(0,img2.shape[1]):
+        if any(v != 0 for v in ResultImg[i][j]):
+            leftest_overlap = min(leftest_overlap, j)
+# 將圖片B傳入左邊
+for i in range(0,img2.shape[0]):
+    for j in range(0,img2.shape[1]):
+        if any(v != 0 for v in ResultImg[i][j]): # overlapped pixel
+            # Linear(alpha) Blending
+            alpha = float(img2.shape[1]-j)/(img2.shape[1]-leftest_overlap)
+            ResultImg[i][j] = (ResultImg[i][j] * (1-alpha) +  img2[i][j] * alpha).astype(int)
+        else:
+            ResultImg[i][j] = img2[i][j]
+
+
+
+
+cv2.imshow("Keypoint Matches of image", Match_picture)
+cv2.imshow("Result of merged image", ResultImg)
+
+cv2.waitKey(0)
 
 
 
 
 
 
-
-
-
+cv2.destroyAllWindows()
 
 
 
