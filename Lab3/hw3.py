@@ -97,7 +97,7 @@ plt.show()
 #do RANSAC
 CorList = np.array(CorList)
 RSC = RANSAC(thresh = 10.0, n_times = 100, points = 4)
-RSC.ransac(CorList = CorList)
+H, Lines = RSC.ransac(CorList = CorList)
 
 
 
