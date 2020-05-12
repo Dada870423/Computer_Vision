@@ -38,6 +38,7 @@ class RANSAC():
             RanPoints.append((Cor1, Cor2, Cor3, Cor4))# = np.vstack((Cor1, Cor2, Cor3, Cor4))
 
             RanPoints = np.vstack((Cor1, Cor2, Cor3, Cor4))
+
             ## cal H
             H = self.CalH(RanPoints)
             ## Cal line
@@ -51,9 +52,10 @@ class RANSAC():
                 MaxLines = Lines
                 AnsH = H
 
-            if len(MaxLines) > (Clen * self.thresh):
-                break
-
+            #if len(MaxLines) > (Clen * self.thresh):
+            #    break
+        print("Ran", RanPoints)
+        print("H: ", AnsH)
         return AnsH, MaxLines
               
 

@@ -39,8 +39,8 @@ def BFmatch (des1, des2, k):
     return match
 
 
-imname1 = 'data/S1.jpg'
-imname2 = 'data/S2.jpg'
+imname1 = 'data/2.jpg'
+imname2 = 'data/1.jpg'
 
 # part1 
 img1 = cv2.imread(imname1)
@@ -72,7 +72,16 @@ for m in Mymatches:
         temp.append((m[0].trainIdx, m[0].queryIdx))
         Mm.append(m[0])
 Mymatches = np.asarray(temp)
-  
+
+
+
+
+Mm = sorted(Mm, key=lambda x: x.distance)
+
+MMMMMM = Mm[:30]
+## print(Mm)
+
+
 # 畫圖
 (hA, wA) = img1.shape[:2]
 (hB, wB) = img2.shape[:2]
@@ -92,21 +101,21 @@ for (trainIdx, queryIdx) in Mymatches:
     (x1, y1) = (kp1[queryIdx].pt)
     (x2, y2) = (kp2[trainIdx].pt)
     CorList.append([x1, y1, x2 + wA, y2])
-plt.imshow(vis)
-plt.show()
+## plt.imshow(vis)
+## plt.show()
 
 
 # part3 
 #do RANSAC
 CorList = np.array(CorList)
-RSC = RANSAC(thresh = 10.0, n_times = 100, points = 4)
+RSC = RANSAC(thresh = 10.0, n_times = 3500, points = 4)
 H, Lines = RSC.ransac(CorList = CorList)
 
 Match_picture = 0
 
 
-print("MY", Mm[0])
-Match_picture = cv2.drawMatches(img1,kp1,img2,kp2, Mm, Match_picture, flags=2)
+print("MY", MMMMMM[0])
+Match_picture = cv2.drawMatches(img1,kp1,img2,kp2, MMMMMM, Match_picture, flags=2)
 
 
 WAP = WARP()
@@ -136,14 +145,39 @@ for i in range(0,img2.shape[0]):
 cv2.imshow("Keypoint Matches of image", Match_picture)
 cv2.imshow("Result of merged image", ResultImg)
 
-cv2.waitKey(0)
+## cv2.waitKey(0)
+
+
+
+plt.imshow(ResultImg)
+plt.show()
+
+## cv2.destroyAllWindows()
 
 
 
 
 
 
-cv2.destroyAllWindows()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
