@@ -5,11 +5,6 @@ import math
 from RANSAC import *
 from WARP import *
 
-class myMatch():
-    def __init__(self, id, distance):
-        self.id = id
-        self.distance = distance
-
 def BFmatch (des1, des2, k):
     match = []
     idx1 = 0
@@ -39,8 +34,8 @@ def BFmatch (des1, des2, k):
     return match
 
 
-imname1 = 'data/2.jpg'
-imname2 = 'data/1.jpg'
+imname1 = 'data/S2.jpg'
+imname2 = 'data/S1.jpg'
 
 # part1 
 img1 = cv2.imread(imname1)
@@ -53,7 +48,6 @@ kp2, des2 = sift.detectAndCompute(Gimg2, None)
 
 # part2
 
-#找match不確定可不可以用cv2 function 好像 不行(?)
 #bf = cv2.BFMatcher()
 #matches = bf.knnMatch(des1, des2, k=2)
 Mymatches = BFmatch(des1, des2, 2)
@@ -82,7 +76,7 @@ MMMMMM = Mm[:30]
 ## print(Mm)
 
 
-# 畫圖
+#
 (hA, wA) = img1.shape[:2]
 (hB, wB) = img2.shape[:2]
 vis = np.zeros((max(hA, hB), wA + wB, 3), dtype="uint8")
@@ -100,7 +94,7 @@ for (trainIdx, queryIdx) in Mymatches:
     cv2.line(vis, ptA, ptB, color, 1)
     (x1, y1) = (kp1[queryIdx].pt)
     (x2, y2) = (kp2[trainIdx].pt)
-    CorList.append([x1, y1, x2 + wA, y2])
+    CorList.append([x1, y1, x2, y2])
 ## plt.imshow(vis)
 ## plt.show()
 
@@ -108,7 +102,7 @@ for (trainIdx, queryIdx) in Mymatches:
 # part3 
 #do RANSAC
 CorList = np.array(CorList)
-RSC = RANSAC(thresh = 10.0, n_times = 3500, points = 4)
+RSC = RANSAC(thresh = 10.0, n_times = 1000, points = 4)
 H, Lines = RSC.ransac(CorList = CorList)
 
 Match_picture = 0
