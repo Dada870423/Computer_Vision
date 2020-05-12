@@ -26,25 +26,20 @@ BFmatch = BFMATCH()
 Mymatches = BFmatch.Best2Matches(des1, des2)
 
 # Apply ratio test
-'''good = []
-for m in matches:
-    if m[0].distance < 0.8*m[1].distance:
-        good.append((m[0].trainIdx, m[0].queryIdx))
-matches = np.asarray(good)
-'''
+
 temp = []
-Mm = []
+MATCH = []
 for m in Mymatches:
     if m[0].distance < 0.8*m[1].distance:
         temp.append((m[0].trainIdx, m[0].queryIdx))
-        Mm.append(m[0])
+        MATCH.append(m[0])
 Mymatches = np.asarray(temp)
 
 
-Mm = sorted(Mm, key=lambda x: x.distance)
+MATCH = sorted(MATCH, key=lambda x: x.distance)
 
-MMMMMM = Mm[:30]
-## print(Mm)
+thirty_match = MATCH[:30]
+
 
 
 #
@@ -66,8 +61,6 @@ for (trainIdx, queryIdx) in Mymatches:
     (x1, y1) = (kp1[queryIdx].pt)
     (x2, y2) = (kp2[trainIdx].pt)
     CorList.append([x1, y1, x2, y2])
-## plt.imshow(vis)
-## plt.show()
 
 
 # part3 
@@ -79,8 +72,7 @@ H, Lines = RSC.ransac(CorList = CorList)
 Match_picture = 0
 
 
-print("MY", MMMMMM[0])
-Match_picture = cv2.drawMatches(img1,kp1,img2,kp2, MMMMMM, Match_picture, flags=2)
+Match_picture = cv2.drawMatches(img1,kp1,img2,kp2, thirty_match, Match_picture, flags=2)
 
 
 WAP = WARP()
@@ -94,7 +86,7 @@ for i in range(0,img2.shape[0]):
     for j in range(0,img2.shape[1]):
         if any(v != 0 for v in ResultImg[i][j]):
             leftest_overlap = min(leftest_overlap, j)
-# 將圖片B傳入左邊
+# to the left
 for i in range(0,img2.shape[0]):
     for j in range(0,img2.shape[1]):
         if any(v != 0 for v in ResultImg[i][j]): # overlapped pixel
@@ -110,45 +102,5 @@ for i in range(0,img2.shape[0]):
 cv2.imshow("Keypoint Matches of image", Match_picture)
 cv2.imshow("Result of merged image", ResultImg)
 
-## cv2.waitKey(0)
-
 plt.imshow(ResultImg)
 plt.show()
-
-## cv2.destroyAllWindows()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
