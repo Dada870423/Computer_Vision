@@ -4,9 +4,13 @@ import cv2
 import math
 
 class BFMATCH():
-    
-    def Best2Matches(self, des1, des2):
+    def __init__(self, thresh):
+        self.thresh = thresh
         self.match = []
+        self.asm = []
+        self.x = []
+        self.xp = []
+    def Best2Matches(self, des1, des2):
         idx1 = 0
         for p1 in des1:
             best_m = []
@@ -30,5 +34,20 @@ class BFMATCH():
                     best_m[1].distance = dis
                 idx2 = idx2 + 1
             idx1 = idx1 + 1
-            self.match.append(best_m)
+            self.match.append(best_m)   
         return self.match
+
+    def CorresspondenceAcrossImages(self, kp1, kp2):
+        for i, (m, n) in enumerate(self.match):
+            if m.distance < self.thresh * n.distance:
+                self.asm.append(m)
+                self.x.append(kp1[m.queryIdx].pt)
+                self.xp.append(kp2[m.trainIdx].pt)
+
+        self.x = np.asarray(self.x)
+        self.xp = np.asarray(self.xp)
+        return self.x, self.xp
+
+
+
+
