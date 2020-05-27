@@ -52,10 +52,6 @@ class RANSAC():
                 MaxLines = Lines
                 AnsH = H
 
-            #if len(MaxLines) > (Clen * self.thresh):
-            #    break
-        print("Ran", RanPoints)
-        print("H: ", AnsH)
         return AnsH, MaxLines
               
 
@@ -75,7 +71,7 @@ class RANSAC():
         U, Sigma, Vt = np.linalg.svd(AsmMtx)
 
         pre_H = np.reshape(Vt[8], (3, 3))
-        H = (1/pre_H.item(8)) * pre_H
+        H = (1 / pre_H.item(8)) * pre_H
         return H
 
 
