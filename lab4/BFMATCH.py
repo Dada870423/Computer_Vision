@@ -4,18 +4,23 @@ import cv2
 import math
 
 class BFMATCH():
-    def __init__(self, thresh):
+    def __init__(self, thresh, des1, des2, kp1, kp2):
         self.thresh = thresh
         self.match = []
         self.asm = []
         self.x = []
         self.xp = []
-    def Best2Matches(self, des1, des2):
+        self.des1 = des1
+        self.des2 = des2
+        self.kp1 = kp1
+        self.kp2 = kp2
+    def Best2Matches(self):
         idx1 = 0
-        for p1 in des1:
+        mmatch = []
+        for p1 in self.des1:
             best_m = []
-            temp0 = cv2.DMatch(idx1, 0, math.sqrt((p1 - des2[0]).T.dot(p1 - des2[0])))
-            temp1 = cv2.DMatch(idx1, 1, math.sqrt((p1 - des2[1]).T.dot(p1 - des2[1])))
+            temp0 = cv2.DMatch(idx1, 0, math.sqrt((p1 - self.des2[0]).T.dot(p1 - self.des2[0])))
+            temp1 = cv2.DMatch(idx1, 1, math.sqrt((p1 - self.des2[1]).T.dot(p1 - self.des2[1])))
             if temp0.distance < temp1.distance:
                 best_m.append(temp0)
                 best_m.append(temp1)       
@@ -24,7 +29,7 @@ class BFMATCH():
                 best_m.append(temp0)
 
             idx2 = 0
-            for p2 in des2:
+            for p2 in self.des2:
                 dis = math.sqrt((p1-p2).T.dot((p1-p2)))
                 if dis < best_m[0].distance:
                     best_m[0].trainIdx = idx2
@@ -34,19 +39,51 @@ class BFMATCH():
                     best_m[1].distance = dis
                 idx2 = idx2 + 1
             idx1 = idx1 + 1
-            self.match.append(best_m)   
-        return self.match
+            mmatch.append(best_m)   
+        return mmatch
 
-    def CorresspondenceAcrossImages(self, kp1, kp2):
+    def B2M_30(self):
+        temp = []
+        MATCH = []
+        self.match  = self.Best2Matches()
+        for m in self.match:
+            if m[0].distance < (self.thresh * m[1].distance):
+                temp.append((m[0].trainIdx, m[0].queryIdx))
+                MATCH.append(m[0])
+        Mymatches = np.asarray(temp)
+
+        MATCH = sorted(MATCH, key=lambda x: x.distance)
+        thirty_match = MATCH[:30]
+        return Mymatches, thirty_match
+            
+
+    def CorresspondenceAcrossImages(self):
         for i, (m, n) in enumerate(self.match):
             if m.distance < self.thresh * n.distance:
                 self.asm.append(m)
-                self.x.append(kp1[m.queryIdx].pt)
-                self.xp.append(kp2[m.trainIdx].pt)
+                self.x.append(self.kp1[m.queryIdx].pt)
+                self.xp.append(self.kp2[m.trainIdx].pt)
 
         self.x = np.asarray(self.x)
         self.xp = np.asarray(self.xp)
         return self.x, self.xp
+
+    def CORLIST(self, Mymatches):
+        CorList = []
+
+        for (trainIdx, queryIdx) in Mymatches:
+            temp = np.random.randint(0, high=255, size=(3,))
+            color = (np.asscalar(temp[0]), np.asscalar(temp[1]), np.asscalar(temp[2]))
+            #print(color)
+            ptA = (int(self.kp1[queryIdx].pt[0]), int(self.kp1[queryIdx].pt[1]))
+            #ptB = (int(self.kp2[trainIdx].pt[0] + wA), int(self.kp2[trainIdx].pt[1]))
+            ptB = (int(self.kp2[trainIdx].pt[0]), int(self.kp2[trainIdx].pt[1]))
+            #cv2.line(vis, ptA, ptB, color, 1)
+            (x1, y1) = (self.kp1[queryIdx].pt)
+            (x2, y2) = (self.kp2[trainIdx].pt)
+            CorList.append([x1, y1, x2, y2])
+        return CorList
+
 
 
 
