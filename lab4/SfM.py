@@ -40,7 +40,9 @@ CorList = BFmatch.CORLIST(Mymatches)
 ## Step2 : estimate the fundamental matrix across images (normalized 8 points)
 RSC = RANSAC(thresh = 10.0, n_times = 1000, points = 4)
 H, Lines = RSC.ransac(CorList = CorList)
-print("H: ", H)
+print("Lines: ", Lines[0])
+
+
 
 
 ## Step3 : draw the interest points on you found in step.1 in one image and the corresponding epipolar lines in another
