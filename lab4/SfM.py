@@ -77,14 +77,10 @@ lines_on_img2 = np.dot(F, inliers_x).T
 draw(lines_on_img1, lines_on_img2, inliers_x, inliers_xp, img1, img2)
 
 ## Step4 : get 4 possible solutions of essential matrix from fundamental matrix
-K = np.array ([[ 5426.566895, 0.678017, 330.096680],
-              [0.000000, 5423.133301, 648.950012],
-              [0.000000, 0.000000 ,1.000000]])
+K = np.array([[1.4219, 0.0005, 0.5092],
+              [0, 1.4219, 0.3802],
+              [0, 0, 0.0010]], dtype=float)
 m1, m2, m3, m4 = find_E(K, F)
-print('m1', m1)
-print('m2', m2)
-print('m3', m3)
-print('m4', m4)
 ## Step5 : find out the most appropriate solution of essential matrix
 ## Step6 : apply triangulation to get 3D points
 ## Step7 : find out correspondence across images
