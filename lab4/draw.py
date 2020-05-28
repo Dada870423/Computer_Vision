@@ -9,7 +9,7 @@ def draw(l, lp, x, xp, img1, img2):
     pic2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
     h, w = img1.shape
     
-    for r, pt_x, pt_xp in zip(l, x.T, xp.T):
+    for r, rp, pt_x, pt_xp in zip(l, lp, x.T, xp.T):
         color = tuple(np.random.randint(0, 255, 3).tolist())
         x0 = 0
         y0 = (-r[2]/r[1]).astype(np.int)
