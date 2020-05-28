@@ -58,8 +58,8 @@ print("Lines: ", Lines[0])
 norm_x, T1 = normalize(h_x, img1.shape)
 norm_xp, T2 = normalize(h_xp, img2.shape)
 
-RSC8pt = RANSAC(thresh = 1000, n_times = 1000, points = 8)
-F, idx = RSC8pt.ransac_8points(norm_x, norm_xp, T1, T2)
+RSC8pt = RANSAC(thresh = 3, n_times = 1000, points = 8)
+F, idx = RSC8pt.ransac_8points(h_x, h_xp, T1, T2)
 print(F)
 print("idx ", idx)
 
