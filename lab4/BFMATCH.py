@@ -51,9 +51,13 @@ class BFMATCH():
                 temp.append((m[0].trainIdx, m[0].queryIdx))
                 MATCH.append(m[0])
         Mymatches = np.asarray(temp)
-
         MATCH = sorted(MATCH, key=lambda x: x.distance)
         thirty_match = MATCH[:30]
+        
+        temp30 =[]
+        for dmatch in thirty_match:
+            temp30.append((dmatch.trainIdx, dmatch.queryIdx))
+        thirty_match = np.asarray(temp30)
         return Mymatches, thirty_match
             
 
