@@ -74,10 +74,10 @@ class RANSAC():
             
             #calculate possible F
             maybe_F = self.Eight_points(try_x1, try_x2, T1, T2)
+            #maybe_F, _ = cv2.findFundamentalMat(try_x1.T, try_x2.T, cv2.FM_LMEDS)
             # get error of every pair for maybe_F
             test_err = self.Cal8points_err(test_x1, test_x2, maybe_F)
-            print(test_err.mean())
-            
+            #print(test_err.mean())
             now_inlier = list(try_idxs)
             for iter_err in range(len(test_err)):
                 if test_err[iter_err] < self.thresh:

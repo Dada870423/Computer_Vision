@@ -8,6 +8,7 @@ import csv
 from RANSAC import *
 from WARP import *
 from BFMATCH import *
+from draw import *
 
 def normalize(points, imgsize):
     ''' 
@@ -39,7 +40,6 @@ Mymatches, thirty_match = BFmatch.B2M_30()
 
 x, xp = BFmatch.CorresspondenceAcrossImages()
 
-
 h_x = np.ones( (x.shape[0], 3), dtype=float)
 h_xp = np.ones( (xp.shape[0], 3), dtype=float)
 h_x[:, :2] = x
@@ -58,11 +58,23 @@ print("Lines: ", Lines[0])
 norm_x, T1 = normalize(h_x, img1.shape)
 norm_xp, T2 = normalize(h_xp, img2.shape)
 
-RSC8pt = RANSAC(thresh = 10000, n_times = 1000, points = 8)
+RSC8pt = RANSAC(thresh = 1000, n_times = 1000, points = 8)
 F, idx = RSC8pt.ransac_8points(norm_x, norm_xp, T1, T2)
+print(F)
 print("idx ", idx)
 
 ## Step3 : draw the interest points on you found in step.1 in one image and the corresponding epipolar lines in another
+inliers_x = h_x[:, idx]
+inliers_xp = h_xp[:, idx]
+
+lines_on_img1 = np.dot(F.T, inliers_xp).T
+lines_on_img2 = np.dot(F, inliers_x).T
+
+#print(lines_on_img1)
+#print(lines_on_img2)
+
+draw(lines_on_img1, lines_on_img2, inliers_x, inliers_xp, img1, img2)
+
 ## Step4 : get 4 possible solutions of essential matrix from fundamental matrix
 ## Step5 : find out the most appropriate solution of essential matrix
 ## Step6 : apply triangulation to get 3D points
