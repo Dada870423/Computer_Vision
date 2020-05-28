@@ -9,12 +9,25 @@ from RANSAC import *
 from WARP import *
 from BFMATCH import *
 
+def normalize(points, imgsize):
+    ''' 
+    new_pt =
+     [[x0, x1, x2 ...],
+      [y0, y1, y2 ...],
+      [1,  1,  1  ...]]
+    '''
+    T = np.array([[2/imgsize[1], 0, -1], 
+                  [0, 2/imgsize[0], -1], 
+                  [0, 0, 1]])
+    new_pt = T.dot(np.array(points))
+    return new_pt, T
 
 InputFile1="./Mesona1.JPG"
 InputFile2="./Mesona2.JPG"
 
 img1 = cv2.imread(InputFile1,0)
 img2 = cv2.imread(InputFile2,0)
+
 
 ## Step1 : find out correspondence across images
 sift = cv2.xfeatures2d.SIFT_create()
@@ -34,16 +47,20 @@ h_xp[:, :2] = xp
 h_x = h_x.T
 h_xp = h_xp.T
 
-
 CorList = BFmatch.CORLIST(Mymatches)
-
 ## Step2 : estimate the fundamental matrix across images (normalized 8 points)
+'''
 RSC = RANSAC(thresh = 10.0, n_times = 1000, points = 4)
 H, Lines = RSC.ransac(CorList = CorList)
 print("Lines: ", Lines[0])
+'''
+# normalize
+norm_x, T1 = normalize(h_x, img1.shape)
+norm_xp, T2 = normalize(h_xp, img2.shape)
 
-
-
+RSC8pt = RANSAC(thresh = 10000, n_times = 1000, points = 8)
+F, idx = RSC8pt.ransac_8points(norm_x, norm_xp, T1, T2)
+print("idx ", idx)
 
 ## Step3 : draw the interest points on you found in step.1 in one image and the corresponding epipolar lines in another
 ## Step4 : get 4 possible solutions of essential matrix from fundamental matrix

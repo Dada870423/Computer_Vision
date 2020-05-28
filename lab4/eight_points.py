@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 
-def eight_point(x1, x2, T1, T2):
+def eight_points(x1, x2, T1, T2):
     #Af =0
     A = []
     for i in range(x1.shape[1]):
