@@ -83,5 +83,5 @@ K = np.array([[1.4219, 0.0005, 0.5092],
 m1, m2, m3, m4 = find_E(K, F)
 ## Step5 : find out the most appropriate solution of essential matrix
 ## Step6 : apply triangulation to get 3D points
-find_true_E(m1, m2, m3, m4, inliers_x.T, inliers_xp.T)
+true_E, points3D = find_true_E(m1, m2, m3, m4, inliers_x.T, inliers_xp.T)
 ## Step7 : find out correspondence across images

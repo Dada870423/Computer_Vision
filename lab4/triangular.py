@@ -40,10 +40,20 @@ def count_p_front(points, m):
     '''
     m = [R|t]
     c = -Rt
+    
+    points = [x0, x1, x2 ...]
+             [y0, y1, y2 ...]
+             [z0, z1, z2 ...]
     '''
     camera_c = np.dot(-m[:, 0:3], m[:, 3].T)
+    count = 0
     for pt in points.T:
-        print(pt)
+        if np.dot((pt - camera_c), m[:, 2].T) > 0:
+            count = count + 1
+    print(m)
+    print(count)
+    return count    
+        
 
 def find_true_E(m1, m2, m3, m4, x, xp):
     pt1 = triangular(m1, x, xp)
@@ -51,5 +61,24 @@ def find_true_E(m1, m2, m3, m4, x, xp):
     pt3 = triangular(m3, x, xp)
     pt4 = triangular(m4, x, xp)
     
-    count_p_front(pt1, m1)
     
+    count1 = count_p_front(pt1, m1)
+    count2 = count_p_front(pt2, m2)
+    count3 = count_p_front(pt3, m3)
+    count4 = count_p_front(pt4, m4)
+    ansE = m1
+    max_count = count1
+    anspt = pt1
+    if count2 > max_count:
+        ansE = m2
+        max_count = count2
+        anspt = pt2
+    if count3 > max_count:
+        ansE = m3
+        max_count = count3
+        anspt = pt3
+    if count4 > max_count:
+        ansE = m4
+        max_count = count4     
+        anspt = pt4
+    return ansE, anspt
