@@ -10,6 +10,7 @@ from WARP import *
 from BFMATCH import *
 from draw import *
 from find_essential import *
+from triangular import *
 
 def normalize(points, imgsize):
     ''' 
@@ -61,7 +62,6 @@ norm_xp, T2 = normalize(h_xp, img2.shape)
 
 RSC8pt = RANSAC(thresh = 3, n_times = 1000, points = 8)
 F, idx = RSC8pt.ransac_8points(h_x, h_xp, T1, T2)
-print(F)
 #print("idx ", idx)
 
 ## Step3 : draw the interest points on you found in step.1 in one image and the corresponding epipolar lines in another
@@ -83,4 +83,5 @@ K = np.array([[1.4219, 0.0005, 0.5092],
 m1, m2, m3, m4 = find_E(K, F)
 ## Step5 : find out the most appropriate solution of essential matrix
 ## Step6 : apply triangulation to get 3D points
+find_true_E(m1, m2, m3, m4, inliers_x.T, inliers_xp.T)
 ## Step7 : find out correspondence across images

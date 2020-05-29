@@ -16,6 +16,13 @@ def draw(l, lp, x, xp, img1, img2):
         x1 = w
         y1 = (-(r[2]+r[0]*w)/r[1]).astype(np.int)
         pic1 = cv2.line(pic1, (x0, y0), (x1, y1), color, 1)
+        ''' 以下是同時畫右邊的線
+        x0 = 0
+        y0 = (-r[2]/r[1]).astype(np.int)
+        x1 = w
+        y1 = (-(r[2]+r[0]*w)/r[1]).astype(np.int)
+        pic2 = cv2.line(pic2, (x0,y0), (x1,y1), color, 1)
+        '''
         pic1 = cv2.circle(pic1, tuple((int(pt_x[0]), int(pt_x[1]))), 3, color, -1)
         pic2 = cv2.circle(pic2, tuple((int(pt_xp[0]), int(pt_xp[1]))), 3, color, -1)
 
