@@ -22,6 +22,10 @@ class RANSAC():
     def Cal8points_err(self, x1, x2, F):
         '''compute error of x F xp 
         '''
+        
+        '''
+        目前還是暫時用cv function 可能要改
+        '''
         Fx1 = np.dot(F, x1)
         Fx2 = np.dot(F, x2)
         denom = Fx1[0]**2 + Fx1[1]**2 + Fx2[0]**2 + Fx2[1]**2
@@ -65,21 +69,24 @@ class RANSAC():
             # spilt 8 points and other for test
             all_idxs = np.arange(npts)
             np.random.shuffle(all_idxs)
-            try_idxs = all_idxs[:8]
-            test_idxs = all_idxs[8:]
+            try_idxs = all_idxs[:self.points]
+            test_idxs = all_idxs[self.points:]
             try_x1 = x1[:, try_idxs]
             try_x2 = x2[:, try_idxs]
             test_x1 = x1[:, test_idxs]
             test_x2 = x2[:, test_idxs]
             
             #calculate possible F
+            '''
+            目前還是暫時用cv function 可能要改
+            '''
             #maybe_F = self.Eight_points(try_x1, try_x2, T1, T2)
             maybe_F, _ = cv2.findFundamentalMat(try_x1.T, try_x2.T, cv2.FM_LMEDS)
             # get error of every pair for maybe_F
             test_err = self.Cal8points_err(test_x1, test_x2, maybe_F)
-            #print(test_err.mean())
+            print(test_err.mean())
             now_inlier = list(try_idxs)
-            for iter_err in range(len(test_err)):
+            for iter_err in range(len(test_err)): 
                 if test_err[iter_err] < self.thresh:
                     now_inlier.append(test_idxs[iter_err])
             
@@ -124,7 +131,7 @@ class RANSAC():
                 AnsH = H
 
         return AnsH, MaxLines
-        
+    '''    
     def CalF(self, RanPoints):
         print(Ranpoints.shape)
         
@@ -168,7 +175,7 @@ class RANSAC():
         pre_H = np.reshape(Vt[8], (3, 3))
         H = (1 / pre_H.item(8)) * pre_H
         return H
-
+    '''
 
 
 

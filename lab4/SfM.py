@@ -25,6 +25,7 @@ def normalize(points, imgsize):
     new_pt = T.dot(np.array(points))
     return new_pt, T
 
+
 InputFile1="./Mesona1.JPG"
 InputFile2="./Mesona2.JPG"
 
@@ -60,7 +61,10 @@ print("Lines: ", Lines[0])
 norm_x, T1 = normalize(h_x, img1.shape)
 norm_xp, T2 = normalize(h_xp, img2.shape)
 
-RSC8pt = RANSAC(thresh = 3, n_times = 1000, points = 8)
+'''
+目前還是暫時用cv function
+'''
+RSC8pt = RANSAC(thresh = 0.1, n_times = 1000, points = 10)
 F, idx = RSC8pt.ransac_8points(h_x, h_xp, T1, T2)
 #print("idx ", idx)
 
