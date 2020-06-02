@@ -34,12 +34,11 @@ elif case == "2":
     InputFile1="./Statue1.bmp"
     InputFile2="./Statue2.bmp"
 elif case == "3":
-    InputFile1="./nctu1.jpg"
-    InputFile2="./nctu2.jpg"
+    InputFile1="./test1.jpg"
+    InputFile2="./test2.jpg"
 
 img1 = cv2.imread(InputFile1,0)
 img2 = cv2.imread(InputFile2,0)
-
 
 ## Step1 : find out correspondence across images
 sift = cv2.xfeatures2d.SIFT_create()
@@ -60,18 +59,11 @@ h_xp = h_xp.T
 
 CorList = BFmatch.CORLIST(Mymatches)
 ## Step2 : estimate the fundamental matrix across images (normalized 8 points)
-'''
-RSC = RANSAC(thresh = 10.0, n_times = 1000, points = 4)
-H, Lines = RSC.ransac(CorList = CorList)
-print("Lines: ", Lines[0])
-'''
+
 # normalize
 norm_x, T1 = normalize(h_x, img1.shape)
 norm_xp, T2 = normalize(h_xp, img2.shape)
 
-'''
-目前還是暫時用cv function
-'''
 RSC8pt = RANSAC(thresh = 0.1, n_times = 1000, points = 10)
 F, idx = RSC8pt.ransac_8points(h_x, h_xp, T1, T2)
 #print("idx ", idx)
