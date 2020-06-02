@@ -14,8 +14,9 @@ def find_E(K, F):
     (xxx, yyy) = E.shape
     for iii in range(xxx):
         for jjj in range(yyy):
-            print(E[iii][jjj], end = " ")
-        print("", end = "\n")
+           pass
+            ### print(E[iii][jjj], end = " ")
+        ### print("", end = "\n")
     U, D, V = np.linalg.svd(E)
     e = (D[0] + D[1]) / 2
     D[0] = D[1] = e

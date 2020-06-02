@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import sys
 import numpy as np
 import cv2
 import math
@@ -24,8 +25,8 @@ def normalize(points, imgsize):
                   [0, 0, 1]])
     new_pt = T.dot(np.array(points))
     return new_pt, T
-case = input("Choose case, 1=Mesona, 2=Statue, 3=nctu: ")
-
+#case = input("Choose case, 1=Mesona, 2=Statue, 3=nctu: ")
+case = sys.argv[1] 
 if case == "1":
     InputFile1="./Mesona1.JPG"
     InputFile2="./Mesona2.JPG"
