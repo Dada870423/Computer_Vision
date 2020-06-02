@@ -24,10 +24,17 @@ def normalize(points, imgsize):
                   [0, 0, 1]])
     new_pt = T.dot(np.array(points))
     return new_pt, T
+case = input("Choose case, 1=Mesona, 2=Statue, 3=nctu: ")
 
-
-InputFile1="./Mesona1.JPG"
-InputFile2="./Mesona2.JPG"
+if case == "1":
+    InputFile1="./Mesona1.JPG"
+    InputFile2="./Mesona2.JPG"
+elif case == "2":
+    InputFile1="./Statue1.bmp"
+    InputFile2="./Statue2.bmp"
+elif case == "3":
+    InputFile1="./nctu1.jpg"
+    InputFile2="./nctu2.jpg"
 
 img1 = cv2.imread(InputFile1,0)
 img2 = cv2.imread(InputFile2,0)
@@ -81,11 +88,22 @@ lines_on_img2 = np.dot(F, inliers_x).T
 draw(lines_on_img1, lines_on_img2, inliers_x, inliers_xp, img1, img2)
 
 ## Step4 : get 4 possible solutions of essential matrix from fundamental matrix
-K = np.array([[1.4219, 0.0005, 0.5092],
-              [0, 1.4219, 0.3802],
-              [0, 0, 0.0010]], dtype=float)
+if case == "1":
+    K = np.array([[1.4219, 0.0005, 0.5092],
+                  [0, 1.4219, 0.3802],
+                  [0, 0, 0.0010]], dtype=float)
+elif case == "2":
+    K = np.array([[5426.566895, 0.678017, 330.096680],
+                  [0.000000, 5423.133301, 648.950012],
+                  [0.000000,    0.000000,   1.000000]], dtype=float)
+else:
+    K = np.array([[3.05191445e+03, 1.11330655e+01, 2.00834471e+03]
+                  [0, 3.05612848e+03, 1.50153437e+03]
+                  [0, 0, 1]], dtype=float)
 m1, m2, m3, m4 = find_E(K, F)
 ## Step5 : find out the most appropriate solution of essential matrix
 ## Step6 : apply triangulation to get 3D points
 true_E, points3D = find_true_E(m1, m2, m3, m4, inliers_x.T, inliers_xp.T)
 ## Step7 : find out correspondence across images
+
+print(points3D, end="")

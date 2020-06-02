@@ -15,21 +15,22 @@ def find_E(K, F):
     e = (D[0] + D[1]) / 2
     D[0] = D[1] = e
     D[2] = 0
-    E = np.dot(np.dot(U, np.diag(D)), V.T)
+    E = np.dot(np.dot(U, np.diag(D)), V)
     U, D, V = np.linalg.svd(E)
     W = np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
-    Z = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 0]])
+    #Z = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 0]])
     R1 = np.dot(np.dot(U, W), V.T)
     R2 = np.dot(np.dot(U, W.T), V.T)
-    if np.linalg.det(R1) < 0:
-        R1 = -R1
+    if np.linalg.det(V) < 0:
+        V = -V 
     if np.linalg.det(R2) < 0:
-        R2 = -R2
-    Tx = np.dot(np.dot(U, Z), U.T)
-    t = np.array ([[(Tx[2][1])], [(Tx[0][2])], [Tx[1][0]]])
-    m1 = np.concatenate((R1, t), axis=1)
-    m2 = np.concatenate((R1, -t), axis=1)
-    m3 = np.concatenate((R2, t), axis=1)
-    m4 = np.concatenate((R2, -t), axis=1)
+        U = -U
+    U3 = U[:, -1]
+    #Tx = np.dot(np.dot(U, Z), U.T)
+    #t = np.array ([[(Tx[2][1])], [(Tx[0][2])], [Tx[1][0]]])
+    m1 = np.vstack((R1.T, U3)).T
+    m2 = np.vstack((R1.T, -U3)).T
+    m3 = np.vstack((R2.T, U3)).T
+    m4 = np.vstack((R2.T, -U3)).T
     # 回傳3x4的matrix
     return m1, m2, m3 ,m4

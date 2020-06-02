@@ -105,7 +105,7 @@ for iter_H in range(len(objpoints)):
     Img_point = Img_point.reshape(49, 2)
     Img_point = np.concatenate((Img_point, np.ones(shape = (49, 1))), axis = 1)
     
-    for iter_M in xrange(len(Obj_Point)):
+    for iter_M in range(len(Obj_Point)):
         x = Obj_Point[iter_M, 0]
         y = Obj_Point[iter_M, 1]
         u = Img_point[iter_M, 0]
@@ -154,7 +154,8 @@ B = B / Lda_B
 ## B done 
 ## Calculate K 
 K = np.linalg.inv(np.linalg.cholesky(B).transpose())
-
+print("K:")
+print(K)
 ## K done
 
 ## do extrinsics
