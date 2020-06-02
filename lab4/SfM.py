@@ -105,5 +105,10 @@ m1, m2, m3, m4 = find_E(K, F)
 ## Step6 : apply triangulation to get 3D points
 true_E, points3D = find_true_E(m1, m2, m3, m4, inliers_x.T, inliers_xp.T)
 ## Step7 : find out correspondence across images
-
-print(points3D, end="")
+# print( np.size(points3D))
+(xxx, yyy) = points3D.shape
+for iii in range(xxx):
+    for jjj in range(yyy):
+        print(points3D[iii][jjj], end = " ")
+    print("", end = "\n")
+##print(points3D, end="")

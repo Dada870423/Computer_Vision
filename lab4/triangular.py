@@ -50,8 +50,12 @@ def count_p_front(points, m):
     for pt in points.T:
         if np.dot((pt - camera_c), m[:, 2].T) > 0:
             count = count + 1
-    print(m)
     print(count)
+    (xxx, yyy) = m.shape
+    for iii in range(xxx):
+        for jjj in range(xxx):
+            print(m[iii][jjj], end = " ")
+        print("", end = "\n")
     return count    
         
 
