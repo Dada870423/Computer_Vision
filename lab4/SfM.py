@@ -98,8 +98,8 @@ elif case == "2":
                   [0.000000, 5423.133301, 648.950012],
                   [0.000000,    0.000000,   1.000000]], dtype=float)
 else:
-    K = np.array([[3.05191445e+03, 1.11330655e+01, 2.00834471e+03]
-                  [0, 3.05612848e+03, 1.50153437e+03]
+    K = np.array([[30519.1445, 11.1330655, 2008.34471],
+                  [0, 3056.12848, 1501.53437],
                   [0, 0, 1]], dtype=float)
 m1, m2, m3, m4 = find_E(K, F)
 ## Step5 : find out the most appropriate solution of essential matrix
