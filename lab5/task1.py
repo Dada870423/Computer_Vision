@@ -22,4 +22,3 @@ def ReadFile(Path):
 
 train_path = "./hw5_data/train/"
 train_list = ReadFile(Path = train_path)
-print(train_list)
