@@ -1,5 +1,5 @@
 import numpy as np
-from task1 import ReadFile
+from task1 import ReadFile, GetNeighbors
 import cv2
 import math
 import random
@@ -88,8 +88,8 @@ def build_histogram(descriptor, center):
     return histogram
 
 # find kp
-print("finding keypoints")
-train_kp =[]
+print("finding keypoints of training data")
+train_kp = []
 for i in train_list:
     img, img_class = i
     sift = cv2.xfeatures2d.SIFT_create()
@@ -106,18 +106,63 @@ else:
     center = k_means(train_kp, 3, 1000)
 
 # Vector Quantization
-print("generating histogram")
+print("generating histogram of train data")
 if mode == "debug":
     img, img_class = train_list[0]
     sift = cv2.xfeatures2d.SIFT_create()
     kp, descriptors = sift.detectAndCompute(img, None)
     histogram = build_histogram(descriptors, center)
-    print(histogram)
+    print(histogram, img_class)
 else:
+    train_histogram = []
     for i in train_list:
         img, img_class = i
         sift = cv2.xfeatures2d.SIFT_create()
         kp, descriptors = sift.detectAndCompute(img, None)
-        build_histogram(descriptors, center)
+        train_histogram.append((build_histogram(descriptors, center), img_class))
+        
+        
+# testing
+print("finding keypoints of test data")
+test_kp = []
+for i in test_list:
+    img, img_class = i
+    sift = cv2.xfeatures2d.SIFT_create()
+    kp, descriptors = sift.detectAndCompute(img, None)
+    test_kp.append(descriptors)
+test_kp = np.concatenate(test_kp, axis=0)
+
+print("generating histogram of testing data")
+test_histogram = []
+for i in test_list:
+    img, img_class = i
+    sift = cv2.xfeatures2d.SIFT_create()
+    kp, descriptors = sift.detectAndCompute(img, None)
+    test_histogram.append((build_histogram(descriptors, center), img_class))
     
+print("do knn")
+if mode == "debug":
+    '''
+    test 1st test picture
+    '''
+    (test_row, Class_) = test_histogram[0]
+    neighbors = GetNeighbors(train = train_histogram, test_row = test_row, num_neighbors = 3)
+    output_values = [row for row in neighbors]
+    prediction = max(set(output_values), key = output_values.count)
+    if prediction == Class_:
+        print("right, class = ", Class_)
+    else:
+        print("wrong, prediction = ", prediction)
+        print("class = ", Class_)
+else:
+    right = 0
+    iter_ = 0
+    for (test_row, Class_) in train_histogram:
+        iter += 1
+        neighbors = GetNeighbors(train = train_histogram, test_row = test_row, num_neighbors = 3)
+        output_values = [row for row in neighbors]
+        prediction = max(set(output_values), key = output_values.count)
+        if prediction == Class_:
+            right += 1
+    print("accuracy", right / (float(iter_))
     

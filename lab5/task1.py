@@ -7,25 +7,25 @@ import os, sys
 from matplotlib import pyplot as plt
 
 def euclidean_distance(row1, row2):
-	distance = 0.0
-	if len(row1) != len(row2):
-		print("not equal", len(row1), len(row2))
-	for i in range(len(row1)-1):
-		distance += (row1[i] - row2[i])**2
-	return math.sqrt(distance)
+    distance = 0.0
+    if len(row1) != len(row2):
+    print("not equal", len(row1), len(row2))
+    for i in range(len(row1)-1):
+        distance += (row1[i] - row2[i])**2
+    return math.sqrt(distance)
 
 
 # Locate the most similar neighbors
 def GetNeighbors(train, test_row, num_neighbors):
-	distances = list()
-	for (train_row, Class_) in train:
-		dist = euclidean_distance(row1 = test_row, row2 = train_row)
-		distances.append((Class_, dist))
-	distances.sort(key = lambda y: y[1])
-	neighbors = list()
-	for i in range(num_neighbors):
-		neighbors.append(distances[i][0])
-	return neighbors
+    distances = list()
+    for (train_row, Class_) in train:
+        dist = euclidean_distance(row1 = test_row, row2 = train_row)
+        distances.append((Class_, dist))
+    distances.sort(key = lambda y: y[1])
+    neighbors = list()
+    for i in range(num_neighbors):
+        neighbors.append(distances[i][0])
+    return neighbors
 
 
 def ReadFile(Path):
