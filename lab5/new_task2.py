@@ -5,9 +5,14 @@ import random
 from task2_util import *
 
 train_path = "./hw5_data/train/"
-train_list = Resize_Normal(Img_list = ReadFile(Path = train_path))
+train_list = ReadFile(Path = train_path)
 test_path = "./hw5_data/test/"
-test_list = Resize_Normal(Img_list = ReadFile(Path = test_path))
+test_list = ReadFile(Path = test_path)
+print(train_list[1][0])
+
+train_list = Resize_Normal(Img_list = train_list)
+test_list  = Resize_Normal(Img_list = test_list)
+print(train_list[1][0])
 
 mode = "all"
 '''
@@ -23,17 +28,6 @@ for i in train_list:
     kp, descriptors = sift.detectAndCompute(img, None)
     train_kp.append(descriptors)
 train_kp = np.concatenate(train_kp, axis=0)    
-
-# find kp
-print("finding keypoints of training data")
-train_kp = []
-for i in train_list:
-    img, img_class = i
-    sift = cv2.xfeatures2d.SIFT_create()
-    kp, descriptors = sift.detectAndCompute(img, None)
-    train_kp.append(descriptors)
-train_kp = np.concatenate(train_kp, axis=0)    
-
 
 # K-means cluster for sift
 print('K-means cluster')
