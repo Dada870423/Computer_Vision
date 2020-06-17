@@ -23,7 +23,7 @@ def euclidean_distance(row1, row2):
     return math.sqrt(distance)
 
 
-filename = 'train617.txt'
+filename = 'train.txt'
 
 
 train_histogram = []
@@ -42,9 +42,9 @@ with open(filename, 'r') as file_to_read:
         train_histogram.append(([t1, t2, t3], int(a[0])))
 
 
-filename = 'test617.txt'
+filename = 'test.txt'
 
-            # 讀第二次存成tr_histogram
+
 test_histogram = []
 
 with open(filename, 'r') as file_to_read:
