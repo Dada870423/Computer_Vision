@@ -15,14 +15,13 @@ def ReadFile(Path):
 
 def Resize_Normal(Img_list):
     Result = []
+    print("normalizing")
     for ImgClass in Img_list:
         img, Class_ = ImgClass
-
-        Rsz = cv2.resize( img, dsize=(16, 16) )
-        temp = [ pixel for row in Rsz for pixel in row ]
+        temp = [ pixel for row in img for pixel in row ]
         #normalize
-        Nmlz = [ float(pixel) / sum(temp) for pixel in temp ]
-        
+        norm_img = np.zeros(img.size)
+        Nmlz = cv2.normalize(img, norm_img, 0, 255, cv2.NORM_MINMAX)
         Result.append( (Nmlz, Class_) )
     return Result
 def Euclidean_distance(row1, row2):
