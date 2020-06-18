@@ -5,11 +5,11 @@ import numpy as np
 from sklearn.svm import SVC
 import sys
 
-n_cluster=80
-"""
+n_cluster=70
+
 # 讀第二次存成tr_histogram
 tr_histogram = []
-filename = 'train/train80.txt'
+filename = 'train/train70.txt'
 with open(filename, 'r') as file_to_read:
     while True:
         lines = file_to_read.readline() # 整行讀取資料
@@ -30,7 +30,7 @@ with open(filename, 'r') as file_to_read:
 
 # 讀第二次存成tr_histogram
 te_histogram = []
-filename = 'test/test80.txt'
+filename = 'test/test70.txt'
 with open(filename, 'r') as file_to_read:
     while True:
         lines = file_to_read.readline() # 整行讀取資料
@@ -51,7 +51,7 @@ with open(filename, 'r') as file_to_read:
 
 # write train data
 seq = np.arange(0, len(tr_histogram))
-data = open("train/train80_add_1.txt",'w+')
+data = open("train/train70_add_1.txt",'w+')
 for i in seq:
     s = str(tr_histogram[i][1])
     for j in range(n_cluster):
@@ -63,18 +63,18 @@ data.close()
 
 # write test data
 seq = np.arange(0, len(te_histogram))
-data = open("test/test80_add_1.txt",'w+')
+data = open("test/test70_add_1.txt",'w+')
 for i in seq:
     s = str(te_histogram[i][1])
     for j in range(n_cluster):
         s = s +" " + str(j+1) + ":" + str(te_histogram[i][0][j])
     print(s, file=data)
 data.close()
-"""
+
 
 # use libsvm
-y, x = svm_read_problem('train/train100_scale.txt')
-yt, xt = svm_read_problem('test/test100_scale.txt')
+y, x = svm_read_problem('train/train70_add_1.txt')
+yt, xt = svm_read_problem('test/test70_add_1.txt')
 
 
 #use sklearn
