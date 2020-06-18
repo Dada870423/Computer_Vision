@@ -6,7 +6,7 @@ from sklearn.svm import SVC
 import sys
 
 n_cluster=80
-
+"""
 # 讀第二次存成tr_histogram
 tr_histogram = []
 filename = 'train/train80.txt'
@@ -70,23 +70,26 @@ for i in seq:
         s = s +" " + str(j+1) + ":" + str(te_histogram[i][0][j])
     print(s, file=data)
 data.close()
-
+"""
 
 # use libsvm
-y, x = svm_read_problem('train/train80_add_1.txt')
-yt, xt = svm_read_problem('test/test80_add_1.txt')
+y, x = svm_read_problem('train/train100_scale.txt')
+yt, xt = svm_read_problem('test/test100_scale.txt')
 
+
+#use sklearn
 #clf = SVC(kernel = 'linear', probability = True)
 #clf.fit(train_x, train_y)
 #print(clf.score(test_x, test_y))
-C = [0.0001, 0.001, 0.01, 0.1, 1, 10, 100]
-gamma = [1e-6, 1e-5, 1e-4, 0.001, 0.01, 0.1, 1]
 
-#model = svm_train(y, x, '-t 0')
-#p_label, p_acc, p_val = svm_predict(yt, xt, model)
-#print('test:')
-#print(p_label)
 
+C = [0.3 ,0.5, 1, 1.3, 100]
+gamma = [0.5, 0.8, 1, 1.2, 1.4]
+
+model = svm_train(y, x, '-t 0')
+p_label, p_acc, p_val = svm_predict(yt, xt, model)
+print('test:')
+print(p_label)
 
 best_acc = 0
 best_para = (0, 0)

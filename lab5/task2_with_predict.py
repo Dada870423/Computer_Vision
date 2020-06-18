@@ -44,7 +44,7 @@ if mode == "debug": #use sklearn
     print(center)
 
 else:
-    center = k_means(data=train_kp, k=200, threas=1000)
+    center = k_means(data=train_kp, k=n_clusters, threas=1000)
 
 # Vector Quantization
 print("generating histogram of train data")
