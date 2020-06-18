@@ -7,7 +7,7 @@ import random
 train_path = "./train50.txt"
 test_path = "./test50.txt"
 
-n_cluster = 16
+n_cluster = 51
 
 # read file in train
 train_his = []
@@ -27,6 +27,7 @@ with open(train_path, "r") as file_to_read:
             #t3 = (float(a[3][2:]) - data_min) / (data_max - data_min)
         train_his.append((x, int(row[0])))
 #print(train_his)
+
 
 # read file in test
 test_his = []
@@ -50,7 +51,6 @@ with open(test_path, "r") as file_to_read:
 # K-means cluster for sift
 
 # Vector Quantization
-
 
 for k in range(1,11):   #testing on different k
     iter_ = 0           #counter of image
