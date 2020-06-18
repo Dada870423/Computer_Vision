@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 def euclidean_distance(row1, row2):
     distance = 0.0
     if len(row1) != len(row2):
-    print("not equal", len(row1), len(row2))
+        print("not equal", len(row1), len(row2))
     for i in range(len(row1)-1):
         distance += (row1[i] - row2[i])**2
     return math.sqrt(distance)

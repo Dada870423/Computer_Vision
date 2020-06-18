@@ -1,5 +1,5 @@
 import numpy as np
-from task1 import ReadFile, GetNeighbors
+from task_function import *
 import cv2
 import math
 import random
@@ -9,7 +9,7 @@ train_list = ReadFile(Path = train_path)
 test_path = "./hw5_data/test/"
 test_list = ReadFile(Path = test_path)
 
-mode = "debug"
+mode = "run"
 '''
 debug: only do clustering on first 1000 kp, generate histogram on 1st picture
 '''
@@ -30,7 +30,7 @@ def k_means(data, k, threas):
     '''
     data_dimention = data.shape[1]
     center = np.random.choice(data.shape[0], k, replace=False)
-    print(center)
+    #print(center)
     center = data[center]
     error = float("inf")
     abs_error = float("inf")
@@ -51,7 +51,7 @@ def k_means(data, k, threas):
                     classIdx = idx
                     min_distance = new_distance
             cluster[classIdx].append(pt)
-        print('k_cluster')
+        print('k_cluster, k=', k)
         for C in cluster:
             print(len(C))
         cluster = np.array(cluster)
@@ -60,13 +60,13 @@ def k_means(data, k, threas):
         new_error = 0
         for idx, C in enumerate(cluster):
             center[idx] = np.mean(C, axis=0)
-            #print(idx, center[idx].shape)
-            #print(center[idx])
+            print(idx, center[idx].shape)
+            print(center[idx])
             for point in C:
                 new_error += distance(center[idx], point)          
         abs_error = abs(error - new_error)
         error = new_error
-        print(abs_error)
+        #print(abs_error)
 
     return center
 
@@ -140,7 +140,7 @@ for i in test_list:
     kp, descriptors = sift.detectAndCompute(img, None)
     test_histogram.append((build_histogram(descriptors, center), img_class))
     
-print("do knn")
+print("do knn, k = 3")
 if mode == "debug":
     '''
     test 1st test picture
@@ -157,12 +157,11 @@ if mode == "debug":
 else:
     right = 0
     iter_ = 0
-    for (test_row, Class_) in train_histogram:
+    for (test_row, Class_) in test_histogram:
         iter += 1
         neighbors = GetNeighbors(train = train_histogram, test_row = test_row, num_neighbors = 3)
         output_values = [row for row in neighbors]
         prediction = max(set(output_values), key = output_values.count)
         if prediction == Class_:
             right += 1
-    print("accuracy", right / (float(iter_))
-    
+    print("accuracy", right / float(iter_))
