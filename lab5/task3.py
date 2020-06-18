@@ -5,11 +5,11 @@ import numpy as np
 from sklearn.svm import SVC
 import sys
 
-n_cluster=70
+n_cluster=100
 
 # 讀第二次存成tr_histogram
 tr_histogram = []
-filename = 'train/train70.txt'
+filename = 'train/train100.txt'
 with open(filename, 'r') as file_to_read:
     while True:
         lines = file_to_read.readline() # 整行讀取資料
@@ -30,7 +30,7 @@ with open(filename, 'r') as file_to_read:
 
 # 讀第二次存成tr_histogram
 te_histogram = []
-filename = 'test/test70.txt'
+filename = 'test/test100.txt'
 with open(filename, 'r') as file_to_read:
     while True:
         lines = file_to_read.readline() # 整行讀取資料
@@ -51,7 +51,7 @@ with open(filename, 'r') as file_to_read:
 
 # write train data
 seq = np.arange(0, len(tr_histogram))
-data = open("train/train70_add_1.txt",'w+')
+data = open("train/train100_add_1.txt",'w+')
 for i in seq:
     s = str(tr_histogram[i][1])
     for j in range(n_cluster):
@@ -63,7 +63,7 @@ data.close()
 
 # write test data
 seq = np.arange(0, len(te_histogram))
-data = open("test/test70_add_1.txt",'w+')
+data = open("test/test100_add_1.txt",'w+')
 for i in seq:
     s = str(te_histogram[i][1])
     for j in range(n_cluster):
@@ -73,23 +73,18 @@ data.close()
 
 
 # use libsvm
-y, x = svm_read_problem('train/train70_add_1.txt')
-yt, xt = svm_read_problem('test/test70_add_1.txt')
+y, x = svm_read_problem('train/train100_scale.txt')
+yt, xt = svm_read_problem('test/test100_scale.txt')
 
-
-#use sklearn
-#clf = SVC(kernel = 'linear', probability = True)
-#clf.fit(train_x, train_y)
-#print(clf.score(test_x, test_y))
-
-
-C = [0.3 ,0.5, 1, 1.3, 100]
-gamma = [0.5, 0.8, 1, 1.2, 1.4]
+#run grid
+C = [0.001, 0.01, 0.1, 1, 10, 100]
+gamma = [1e-4, 1e-3, 1e-2, 0.1, 1, 10, 100]
 
 model = svm_train(y, x, '-t 0')
 p_label, p_acc, p_val = svm_predict(yt, xt, model)
 print('test:')
 print(p_label)
+
 
 best_acc = 0
 best_para = (0, 0)
@@ -101,7 +96,7 @@ for cidx in C:
         p_label, p_acc, p_val = svm_predict(yt, xt, model)
         print('test:')
         print(p_label)
-        if max(p_acc) >= best_acc:
+        if max(p_acc) > best_acc:
             best_acc = max(p_acc)
             best_para = (cidx, gidx)
 print("best_acc:", best_acc)
