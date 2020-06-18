@@ -37,7 +37,7 @@ def Euclidean_distance(row1, row2):
 def GetNeighbors(train, test_row, num_neighbors):
     distances = list()
     for (train_row, Class_) in train:
-        dist = euclidean_distance(row1 = test_row, row2 = train_row)
+        dist = Euclidean_distance(row1 = test_row, row2 = train_row)
         distances.append((Class_, dist))
     distances.sort(key = lambda y: y[1])
     neighbors = list()
@@ -109,4 +109,16 @@ def build_histogram(descriptor, center):
                 lable = idx
                 min_distance = dis
             histogram[lable] += 1    
+    return histogram
+
+def predict_histogram(descriptor, model, center):
+    '''
+    input: descriptor of a picture, k-cluster model
+    output: histogram of the picture
+    '''
+    histogram = np.zeros(center.shape[0])
+    for kp in descriptor:
+        label = model.predict(kp.reshape(1, -1))  
+        histogram[label] += 1
+    #print(histogram)
     return histogram
