@@ -4,6 +4,7 @@ import math
 import random
 from task2_util import *
 from sklearn.cluster import KMeans
+from sklearn.cluster import MiniBatchKMeans
 
 train_path = "./hw5_data/train/"
 train_list = ReadFile(Path = train_path)
@@ -34,12 +35,15 @@ train_kp = np.concatenate(train_kp, axis=0)
 print('K-means cluster')
 if mode == "debug": #use sklearn
     print("try sklearn kmeans")
-    skl_kmeans = KMeans(n_clusters=200, random_state=0).fit(train_kp)
-    center = skl_kmeans.cluster_centers_
+    #skl_kmeans = KMeans(n_clusters=200, random_state=0).fit(train_kp)
+    skl_kmeans = MiniBatchKMeans(n_clusters = 4, random_state = 0, batch_size = 7000).fit(train_kp)
+    #skl_kmeans = skl_kmeans.partial_fit(train_kp)
+    center = skl_kmeans.cluster_centers_ #cluster_centers_
     print(center)
+
 else:
     center = k_means(data=train_kp, k=200, threas=1000)
-
+"""
 # Vector Quantization
 print("generating histogram of train data")
 if mode == "debug":
@@ -62,7 +66,7 @@ else:
         kp, descriptors = sift.detectAndCompute(img, None)
         train_histogram.append((build_histogram(descriptors, center), img_class))
 random.shuffle(train_histogram)        
-
+"""
 # write train data
 data = open("train2.txt",'w+')
 for i in range(0, len(train_histogram)):
